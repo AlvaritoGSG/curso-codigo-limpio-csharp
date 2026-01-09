@@ -5,28 +5,28 @@ namespace ToDo
 {
     internal class Program
     {
-        public static List<string> TaskList { get; set; }
+        public static List<string> Tasks { get; set; }
 
         static void Main(string[] args)
         {
-            TaskList = new List<string>();
+            Tasks = new List<string>();
             int optionSelectedMenu = 0;
             do
             {
                 optionSelectedMenu = ShowMainMenu();
-                if (optionSelectedMenu == 1)
+                if ((option)optionSelectedMenu == option.Add)
                 {
                     ShowAddOption();
                 }
-                else if (optionSelectedMenu == 2)
+                else if (optionSelectedMenu == (int)option.Remove)
                 {
                     ShowRemoveOption();
                 }
-                else if (optionSelectedMenu == 3)
+                else if ((option)optionSelectedMenu == option.ShowList)
                 {
-                    ShowTaskListOption();
+                    ShowTasksOption();
                 }
-            } while (optionSelectedMenu != 4);
+            } while (optionSelectedMenu != (int)option.Exit);
         }
         /// <summary>
         /// Show the main menu 
@@ -52,9 +52,9 @@ namespace ToDo
             {
                 Console.WriteLine("Ingrese el número de la tarea a remover: ");
                 // Show current taks
-                for (int i = 0; i < TaskList.Count; i++)
+                for (int i = 0; i < Tasks.Count; i++)
                 {
-                    Console.WriteLine((i + 1) + ". " + TaskList[i]);
+                    Console.WriteLine((i + 1) + ". " + Tasks[i]);
                 }
                 Console.WriteLine("----------------------------------------");
 
@@ -63,10 +63,10 @@ namespace ToDo
                 int indexToRemove = Convert.ToInt32(line) - 1;
                 if (indexToRemove > -1)
                 {
-                    if (TaskList.Count > 0)
+                    if (Tasks.Count > 0)
                     {
-                        string task = TaskList[indexToRemove];
-                        TaskList.RemoveAt(indexToRemove);
+                        string task = Tasks[indexToRemove];
+                        Tasks.RemoveAt(indexToRemove);
                         Console.WriteLine("Tarea " + task + " eliminada");
                     }
                 }
@@ -82,7 +82,7 @@ namespace ToDo
             {
                 Console.WriteLine("Ingrese el nombre de la tarea: ");
                 string task = Console.ReadLine();
-                TaskList.Add(task);
+                Tasks.Add(task);
                 Console.WriteLine("Tarea registrada");
             }
             catch (Exception)
@@ -90,21 +90,30 @@ namespace ToDo
             }
         }
 
-        public static void ShowTaskListOption()
+        public static void ShowTasksOption()
         {
-            if (TaskList == null || TaskList.Count == 0)
+            if (Tasks == null || Tasks.Count == 0)
             {
                 Console.WriteLine("No hay tareas por realizar");
             }
             else
             {
                 Console.WriteLine("----------------------------------------");
-                for (int i = 0; i < TaskList.Count; i++)
+                for (int i = 0; i < Tasks.Count; i++)
                 {
-                    Console.WriteLine((i + 1) + ". " + TaskList[i]);
+                    Console.WriteLine((i + 1) + ". " + Tasks[i]);
                 }
                 Console.WriteLine("----------------------------------------");
             }
         }
     }
+
+    public enum option
+    {
+        Add = 1,
+        Remove = 2,
+        ShowList = 3,
+        Exit = 4
+    }
+
 }
