@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ToDo
 {
@@ -11,6 +12,13 @@ namespace ToDo
         {
             Tasks = new List<string>();
             int optionSelectedMenu = 0;
+            /// <summary>
+            ///     Show the main menu
+            /// </summary>
+            /// <returns>
+            ///     Returns option indicated by user
+            /// </returns>
+
             do
             {
                 optionSelectedMenu = ShowMainMenu();
@@ -28,10 +36,7 @@ namespace ToDo
                 }
             } while (optionSelectedMenu != (int)option.Exit);
         }
-        /// <summary>
-        /// Show the main menu 
-        /// </summary>
-        /// <returns>Returns option indicated by user</returns>
+        const string separator = "==========================";
         public static int ShowMainMenu()
         {
             Console.WriteLine("----------------------------------------");
@@ -40,39 +45,31 @@ namespace ToDo
             Console.WriteLine("2. Remover tarea");
             Console.WriteLine("3. Tareas pendientes");
             Console.WriteLine("4. Salir");
-
             // Read line
             string line = Console.ReadLine();
             return Convert.ToInt32(line);
         }
-
         public static void ShowRemoveOption()
         {
             try
             {
                 Console.WriteLine("Ingrese el número de la tarea a remover: ");
-                // Show current taks
-                for (int i = 0; i < Tasks.Count; i++)
-                {
-                    Console.WriteLine((i + 1) + ". " + Tasks[i]);
-                }
-                Console.WriteLine("----------------------------------------");
-
+                ShowTasksOption();
                 string line = Console.ReadLine();
                 // Remove one position
                 int indexToRemove = Convert.ToInt32(line) - 1;
-                if (indexToRemove > -1)
+                if (indexToRemove > -1 && Tasks.Count > 0)
                 {
-                    if (Tasks.Count > 0)
-                    {
-                        string task = Tasks[indexToRemove];
-                        Tasks.RemoveAt(indexToRemove);
-                        Console.WriteLine("Tarea " + task + " eliminada");
-                    }
+                    string task = Tasks[indexToRemove];
+                    Tasks.RemoveAt(indexToRemove);
+                    Console.WriteLine(separator);
+                    Console.WriteLine("Tarea " + task + " eliminada");
+                    Console.WriteLine(separator);
                 }
             }
             catch (Exception)
             {
+                Console.WriteLine("Error al eliminar la tarea");
             }
         }
 
@@ -87,6 +84,7 @@ namespace ToDo
             }
             catch (Exception)
             {
+                Console.WriteLine("Error al agregar la tarea");
             }
         }
 
@@ -94,16 +92,19 @@ namespace ToDo
         {
             if (Tasks == null || Tasks.Count == 0)
             {
+                Console.WriteLine(separator);
                 Console.WriteLine("No hay tareas por realizar");
+                Console.WriteLine(separator);
             }
             else
             {
-                Console.WriteLine("----------------------------------------");
-                for (int i = 0; i < Tasks.Count; i++)
+                Console.WriteLine(separator);
+                // foreach (var (t, i) in Tasks.Select((t, i) => (t, i + 1)))
+                foreach (var (t, i) in Tasks.ToIndexedEnumerable())
                 {
-                    Console.WriteLine((i + 1) + ". " + Tasks[i]);
+                    Console.WriteLine($"{i + 1}. {t}");
                 }
-                Console.WriteLine("----------------------------------------");
+                Console.WriteLine(separator);
             }
         }
     }
@@ -116,4 +117,18 @@ namespace ToDo
         Exit = 4
     }
 
+    public static class EnumerableExtensions
+    {
+        public static IEnumerable<(T item, int index)> ToIndexedEnumerable<T>(this IEnumerable<T> source)
+        {
+            int index = 0;
+            foreach (T item in source)
+            {
+                yield return (item, index);
+                // 'yield return' es clave: devuelve el par y "pausa" el método.
+                // No crea una lista nueva en memoria, solo entrega un dato a la vez.
+                index++;
+            }
+        }
+    }
 }
