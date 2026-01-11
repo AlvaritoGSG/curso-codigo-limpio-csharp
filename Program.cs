@@ -6,11 +6,9 @@ namespace ToDo
 {
     internal class Program
     {
-        public static List<string> Tasks { get; set; }
-
+        public static List<string> Tasks { get; set; } = new List<string>();
         static void Main(string[] args)
         {
-            Tasks = new List<string>();
             int optionSelectedMenu = 0;
             /// <summary>
             ///     Show the main menu
@@ -49,39 +47,6 @@ namespace ToDo
             string line = Console.ReadLine();
             return Convert.ToInt32(line);
         }
-        public static void ShowRemoveOption()
-        {
-            if (Tasks == null || Tasks.Count == 0)
-            {
-                responder("No hay tareas por eliminar.");
-                return;
-            }
-            try
-            {
-                ShowTasksOption();
-                Console.WriteLine("[ c ] . Para cancelar operación de eliminar.");
-                // Personalizar respuesta para opción [ c ]. Aquí en try (No catch)
-                Console.WriteLine(" -> Ingrese el número de la tarea a remover: ");
-                string line = Console.ReadLine();
-                int indexToRemove = Convert.ToInt32(line) - 1;
-                if (indexToRemove < 0 || indexToRemove > Tasks.Count - 1)
-                {
-                    responder("Opción seleccionada fuera de rango.");
-                    ShowRemoveOption();
-                }
-                else if (indexToRemove > -1 && Tasks.Count > 0)
-                {
-                    string task = Tasks[indexToRemove];
-                    Tasks.RemoveAt(indexToRemove);
-                    responder("Tarea: " + task + " ¡Eliminada!");
-                    ShowTasksOption();
-                }
-            }
-            catch (Exception)
-            {
-                responder("Error al eliminar la tarea. Ingrese un opción válida.");
-            }
-        }
         public static void ShowAddOption()
         {
             try
@@ -95,7 +60,7 @@ namespace ToDo
                 }
                 else
                 {
-                    responder("-> El nombre de la tarea no puede estar vacío, ¡Ingrese un dato válido!");
+                    responder(" -> El nombre de la tarea no puede estar vacío, ¡Ingrese un dato válido!");
                     ShowAddOption();
                 }
             }
@@ -104,9 +69,50 @@ namespace ToDo
                 Console.WriteLine("Error al agregar la tarea.");
             }
         }
-        public static void ShowTasksOption()
+
+        public static void ShowRemoveOption()
         {
             if (Tasks == null || Tasks.Count == 0)
+            {
+                responder("No hay tareas por eliminar.");
+                return;
+            }
+            try
+            {
+                ShowTasksOption();
+                Console.WriteLine("[ c ] . Para cancelar operación de eliminar.");
+                Console.WriteLine(" -> Ingrese el número de la tarea a remover: ");
+                string line = Console.ReadLine();
+
+                if (line == "c" || line == "C")
+                {
+                    responder("¡Operación cancelada!");
+                    return;
+                }
+                // Validación de string ingresado por usuario para EVITAR CATCH
+                int indexToRemove = Convert.ToInt32(line) - 1;
+                if (indexToRemove < 0 || indexToRemove > Tasks.Count - 1)
+                {
+                    responder("Opción seleccionada fuera de rango.");
+                    ShowRemoveOption();
+                }
+                else if (indexToRemove > -1 && Tasks.Count > 0)
+                {
+                    string task = Tasks[indexToRemove];
+                    Tasks.RemoveAt(indexToRemove);
+                    responder($"Tarea: {task} ¡Eliminada!");
+                    ShowTasksOption();
+                }
+            }
+            catch (Exception)
+            {
+                responder("Error al eliminar la tarea. Ingrese un opción válida.");
+            }
+        }
+        public static void ShowTasksOption()
+        {
+            // if (Tasks == null || Tasks.Count == 0)
+            if (Tasks?.Count == 0)
             {
                 responder("No hay tareas por pendientes/por realizar.");
             }
